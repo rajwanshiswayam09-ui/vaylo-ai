@@ -8,7 +8,10 @@ const LIMIT = 10; // 10 requests
 const WINDOW = 60 * 1000; // per 1 minute
 
 export function rateLimit(request: NextRequest) {
-  const ip = request.ip || request.headers.get("x-forwarded-for") || "anonymous";
+  const ip =
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    request.headers.get("x-real-ip") ||
+    "anonymous";
   const now = Date.now();
 
   const userLimit = rateLimitMap.get(ip) || { count: 0, lastReset: now };
